@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #-*- coding: utf8 -*-
-import numpy, pandas, datetime as dt, time
+import sys, numpy, pandas, datetime as dt, time
 from turtle import trade, index, data, utils
 from turtle.data import StockDataSource
 
@@ -27,36 +27,45 @@ def list_info(stock_data, long_index, stop_loss, count = 0):
         
 
 if __name__ == "__main__":
+    # sys.argv = ['./disp.py', '-f', 'data/hs.0525.db', '-d', '20090701', '-c', '600036.sh', '601166.sh', '601288.sh']
+
     _args = index.TurtleArgs()
     sdsr = data.StockData_SQLite( _args.files[0] )
 
     title = 'plot['
     for code in _args.codes:
-        title = '%s%s' % (title, code)
+        title = '%s%s-' % (title, code)
     title = '%s]'%title
 
-    plot = utils.StockDisp(title, 1)
-    cidx = 0
+    sdsr.load('399300.sz', _args.dates[0], _args.dates[1], 'index', _args.params[1])
+    if not len(sdsr.stocks):
+        exit
+    data_list, _dates = sdsr.parse_price()
+    _data_vec = numpy.transpose( data_list )
 
+    plot = utils.StockDisp(title, 1)
+    plot.LogPlot(plot.ax1, _data_vec[0], _data_vec[4], colors[0])
+    cidx = 1
+    
     for code in _args.codes:
         sdsr.load(code, _args.dates[0], _args.dates[1], _args.params[0], _args.params[1])
         if not len(sdsr.stocks):
             continue
         data_list, _dates = sdsr.parse_price()
         _data_vec = numpy.transpose( data_list )
-        turtle = index.TurtleIndex()
-            
-        if _args.params[2] == 'long':
-            long_index = index.LongTurtleIndex(turtle, _data_vec, _args.turtle_args[2], 
-                        _args.turtle_args[3], _args.turtle_args[0], _args.turtle_args[1])
-        else:
-            long_index = index.ShortTurtleIndex(turtle, _data_vec, _args.turtle_args[2], 
-                        _args.turtle_args[3], _args.turtle_args[0], _args.turtle_args[1])
 
-        info_list = list_info(_data_vec, long_index, _args.turtle_args[0] )
-        print( info_list.tail(20) )
+        # turtle = index.TurtleIndex()
+        # if _args.params[2] == 'long':
+        #     long_index = index.LongTurtleIndex(turtle, _data_vec, _args.turtle_args[2], 
+        #                 _args.turtle_args[3], _args.turtle_args[0], _args.turtle_args[1])
+        # else:
+        #     long_index = index.ShortTurtleIndex(turtle, _data_vec, _args.turtle_args[2], 
+        #                 _args.turtle_args[3], _args.turtle_args[0], _args.turtle_args[1])
 
-        info_list.to_csv( '%s/%s.csv'%(_args.files[2], code) )
+        # info_list = list_info(_data_vec, long_index, _args.turtle_args[0] )
+        # print( info_list.tail(20) )
+        # info_list.to_csv( '%s/%s.csv'%(_args.files[2], code) )
+
         plot.LogPlot(plot.ax1, _data_vec[0], _data_vec[4], colors[cidx])
         cidx += 1
 

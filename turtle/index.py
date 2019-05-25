@@ -11,7 +11,7 @@ class TurtleArgs:
         self.codes = ['399300.SZ']
         self.dates = ['20180101', '20190218']
         self.files = [':memory:', ':memory:', 'records', 'images']
-        self.params = [ 'index', 'daily', 'long' ]
+        self.params = [ 'stock', 'daily', 'long' ]
 
         parser = argparse.ArgumentParser(description="show example")
         parser.add_argument('cmd_name', default='group', nargs='?', 

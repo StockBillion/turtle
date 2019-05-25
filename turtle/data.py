@@ -124,7 +124,7 @@ class StockDataSource:
 class StockData_Tushare(StockDataSource):
     '股票数据源，来自网络数据'
     
-    ts.set_token("e2a71ab976c499825f6f48186f24700f70e0f13af933e2f508684cc0")
+    ts.set_token("") # your token
     ts_api = ts.pro_api()
 
     def __init__(self):
